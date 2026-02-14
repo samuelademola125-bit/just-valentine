@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Surprise for Oyetoun</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow-x: hidden; }
+    .page { width: 100%; height: 100vh; display: none; justify-content: center; align-items: center; flex-direction: column; text-align: center; position: relative; background-size: cover; background-repeat: no-repeat; opacity: 0; transition: opacity 1s; }
+    .active { display: flex; opacity: 1; }button { padding: 14px 28px; margin: 10px; font-size: 22px; border: none; border-radius: 12px; cursor: pointer; position: relative; background: #ff6699; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.3s; font-family: 'Pacifico', cursive; }
+button:hover { transform: scale(1.1); }
+.next-btn { position: fixed; bottom: 20px; right: 20px; font-size: 18px; background:#ff99cc; color:#fff; }
+
+.emoji { position: absolute; font-size: 24px; animation: floatUp linear infinite; }
+@keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity:0; } 50% { opacity:1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity:0; } }
+
+.letter span { opacity: 0; display: inline-block; animation: typing 0.05s forwards; font-family: 'Roboto', sans-serif; font-size: 22px; line-height: 2; color: #b30059; text-shadow: 1px 1px 2px #ffb3d9; }
+.letter::after { content: '|'; animation: blink 1s infinite; margin-left:2px; }
+@keyframes typing { to { opacity:1; } }
+@keyframes blink { 0%,50%,100% {opacity:1;} 25%,75% {opacity:0;} }
+
+.confetti { position: absolute; width: 10px; height: 10px; background: #ff66cc; opacity: 0.8; top: 0; animation: confettiFall linear infinite; }
+@keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(100vh) rotate(360deg); } }
+
+</style>
+</head>
+<body><audio id="romanticMusic" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7bdf2d20a4.mp3?filename=romantic-music-11846.mp3" loop></audio>
+
+<!-- Page 1 --><div class="page active" id="page1" style="background: linear-gradient(135deg, #ff4d6d, #ff99c8), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=1080&w=1080'); background-blend-mode: overlay; background-size: cover; background-repeat: no-repeat;">
+    <h1 style="color:#fff; text-shadow: 2px 2px 8px #b30059;">Hi Sweetheart 😘, will you be my Valentine?</h1>
+    <div>
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 😅</button>
+    </div>
+</div><!-- Page 2 --><div class="page" id="page2" style="background: linear-gradient(135deg, #ff6699, #ffb3d9), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=1080&w=1080'); background-blend-mode: overlay; background-size: cover; background-repeat: no-repeat;">
+    <h1 style="font-size: 44px; color:#fff; text-shadow: 1px 1px 5px #b30059;">Hurray! 🎉😊</h1>
+    <div id="floatingEmojis"></div>
+    <button class="next-btn" onclick="nextPage(3)">Next ➡️</button>
+</div><!-- Page 3 --><div class="page" id="page3" style="background: linear-gradient(135deg, #ff99cc, #ffd6e8), url('https://images.unsplash.com/photo-1493500541747-7a2e0ee3c4b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=1080&w=1080'); background-blend-mode: overlay; padding: 30px; background-size: cover; background-repeat: no-repeat;">
+    <h2 style="font-family: 'Pacifico', cursive; color:#b30059; font-size:40px;">My Dearest Oyetoun,</h2>
+    <p class="letter" id="loveLetter"></p>
+    <button class="next-btn" onclick="nextPage(4)">Next ➡️</button>
+    <div id="floatingEmojisMid"></div>
+</div><!-- Page 4 --><div class="page" id="page4" style="background: linear-gradient(135deg, #ff4d6d, #ff99cc), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=1080&w=1080'); background-blend-mode: overlay;">
+    <div id="stars"></div>
+    <div id="bouquet" style="margin-top: 50px; font-size: 56px;">💐</div>
+    <h2 style="margin-top: 30px; color:#fff; text-shadow: 2px 2px 6px #b30059; font-size:32px;">"You’re my favorite place to be."</h2>
+    <div id="floatingEmojisEnd"></div>
+</div><script>
+const music = document.getElementById('romanticMusic');
+const yesBtn = document.getElementById('yesBtn');
+const noBtn = document.getElementById('noBtn');
+const loveLetter = document.getElementById('loveLetter');
+
+function nextPage(pageNum){
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page'+pageNum).classList.add('active');
+    if(pageNum===2) createFloatingEmojis(document.getElementById('floatingEmojis'));
+    if(pageNum===3) createFloatingEmojis(document.getElementById('floatingEmojisMid'));
+    if(pageNum===4) createFloatingEmojis(document.getElementById('floatingEmojisEnd'));
+    if(pageNum===4) createStars();
+    createConfetti();
+}
+
+yesBtn.addEventListener('click', () => { music.volume = 0.5; music.play(); nextPage(2); });
+noBtn.addEventListener('mouseover', () => {
+    const x = Math.random()*(window.innerWidth-100);
+    const y = Math.random()*(window.innerHeight-50);
+    noBtn.style.position='absolute'; noBtn.style.left=x+'px'; noBtn.style.top=y+'px';
+});
+
+// Typewriter letter
+const letterText = "You  are  the  sunshine  that  brightens  my  day,  the  heartbeat  I  cherish, and  the  dream  I  hold  dear.  I  hope  this  little  surprise  makes  you  smile  and  feel  all  the  love  I  have  for  you. Will  you  be  mine  forever? 💖";
+function typeLetter(){
+    loveLetter.innerHTML='';
+    for(let i=0;i<letterText.length;i++){
+        const span=document.createElement('span');
+        span.style.animationDelay=(i*0.05)+'s';
+        span.innerText=letterText[i];
+        loveLetter.appendChild(span);
+    }
+}
+typeLetter();
+
+function createFloatingEmojis(container){
+    const emojis=['💖','💘','❤️','💐','😍','💕'];
+    for(let i=0;i<20;i++){
+        const span=document.createElement('span');
+        span.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+        span.className='emoji';
+        span.style.left=Math.random()*90+'vw';
+        span.style.fontSize = (18 + Math.random()*12) + 'px';
+        span.style.animationDuration = (2 + Math.random()*1.5)+'s';
+        container.appendChild(span);
+        setInterval(()=>{
+            span.style.left=Math.random()*90+'vw';
+            span.style.animationDuration = (2 + Math.random()*1.5)+'s';
+        }, 5000);
+    }
+}
+
+function createStars(){
+    const starsContainer = document.getElementById('stars');
+    for(let i=0;i<30;i++){
+        const star = document.createElement('span');
+        star.innerText = '✦';
+        star.style.position = 'absolute';
+        star.style.left = Math.random()*100 + 'vw';
+        star.style.top = Math.random()*50 + 'vh';
+        star.style.fontSize = (8 + Math.random()*12) + 'px';
+        star.style.color = '#fff';
+        star.style.opacity = 0.8;
+        star.style.animation = 'twinkle ' + (1 + Math.random()*2) + 's infinite alternate';
+        starsContainer.appendChild(star);
+    }
+}
+
+function createConfetti(){
+    for(let i=0;i<50;i++){
+        const confetti = document.createElement('div');
+        confetti.className='confetti';
+        confetti.style.left=Math.random()*100+'vw';
+        confetti.style.background=['#ff66cc','#ffcc66','#66ccff','#99ff66'][Math.floor(Math.random()*4)];
+        confetti.style.animationDuration=(3 + Math.random()*2)+'s';
+        document.body.appendChild(confetti);
+        setTimeout(()=>confetti.remove(),5000);
+    }
+}
+</script></body>
+</html>
